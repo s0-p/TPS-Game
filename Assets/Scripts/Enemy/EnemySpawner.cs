@@ -10,6 +10,10 @@ public class EnemySpawner : MonoBehaviour
     float _spawnMaxTime = 5f;
     float _spawnTime;
     //----------------------------------------
+    [Header("적 수 증가 시간간격"), SerializeField]
+    float _IncreaseInterval = 10;
+    [Header("적 수 증가량"), SerializeField]
+    int _IncreaseCnt = 2;
     int _spawnCnt = 1;
     //----------------------------------------
     [Header("스폰 위치"), SerializeField]
@@ -19,7 +23,12 @@ public class EnemySpawner : MonoBehaviour
     GameObject[] _enemyPrefs;
     //-----------------------------------------------------------------
     void Awake() { _spawnTime = 0f; _spawnCnt = 1; }
-    void Start() { StartCoroutine(Crt_StartSpawn()); }
+    void Start() 
+    { 
+        StartCoroutine(Crt_StartSpawn());
+        StartCoroutine(Crt_IncreaseSpawnCnt());
+    }
+    void Update() { if (GameManager.Instance.IsEnd) StopAllCoroutines(); }
     //-----------------------------------------------------------------
     IEnumerator Crt_StartSpawn()
     {
@@ -29,6 +38,14 @@ public class EnemySpawner : MonoBehaviour
                 Spawn();
 
             yield return new WaitForSeconds(_spawnTime);
+        }
+    }
+    IEnumerator Crt_IncreaseSpawnCnt()
+    {
+        while (true)
+        {
+            yield return new WaitForSeconds(_IncreaseInterval);
+            _spawnCnt += _IncreaseCnt;
         }
     }
     void Spawn()

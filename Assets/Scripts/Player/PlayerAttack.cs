@@ -6,28 +6,44 @@ public class PlayerAttack : MonoBehaviour
 {
     [Header("일반 공격 쿨타임"), SerializeField]
     float _nomalAttackCool = 1f;
+    float _curTime = 0f;
     //----------------------------------------
     [Header("무기 스폰 위치"), SerializeField]
     Transform _weaponSpawnTrsf;
     [Header("일반 무기 프리팹"), SerializeField]
     GameObject _nomalWeaponPref;
+    //----------------------------------------
+    GameObject _target;
+    Vector3 _dirToTarget;
     //-----------------------------------------------------------------
-    void Start()
+    void Update()
     {
-        StartCoroutine(Crt_AutoNomalAttack());
-    }
-
-    IEnumerator Crt_AutoNomalAttack()
-    {
-        while (true)
+        _curTime += Time.deltaTime;
+        if (_target != null && _curTime > _nomalAttackCool)
         {
-            Instantiate(_nomalWeaponPref, _weaponSpawnTrsf.position, _weaponSpawnTrsf.rotation);
-            yield return new WaitForSeconds(_nomalAttackCool);
+            _curTime = 0f;
+            Instantiate(_nomalWeaponPref, _weaponSpawnTrsf.position, Quaternion.LookRotation(_dirToTarget));
         }
     }
-    //-----------------------------------------------------------------
-    public void StopAttack()
+    void OnTriggerStay(Collider other)
     {
-        StopAllCoroutines();
+        if (other.gameObject.layer == LayerMask.NameToLayer("Enemy"))
+        {
+            if (_target == null)
+            {
+                _target = other.gameObject;
+                _dirToTarget = other.transform.position - transform.position;
+            }
+            else
+            {
+                Vector3 dir = other.transform.position - transform.position;
+                if (dir.sqrMagnitude < _dirToTarget.sqrMagnitude)
+                {
+                    _target = other.gameObject;
+                    _dirToTarget = dir;
+                }
+            }
+        }
     }
+    void OnTriggerExit(Collider other) { _target = null; }
 }

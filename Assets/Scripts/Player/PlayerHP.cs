@@ -27,11 +27,6 @@ public class PlayerHP : MonoBehaviour
         _moveCtrl = GetComponent<PlayerMove>();
         _attackCtrl = GetComponent<PlayerAttack>();
     }
-
-    void Update()
-    {
-        if (_isDead) return;
-    }
     //-----------------------------------------------------------------
     public void TakeDamage(float damage)
     {
@@ -46,6 +41,7 @@ public class PlayerHP : MonoBehaviour
     {
         _isDead = true;
         _moveCtrl.enabled = false;
-        _attackCtrl.StopAttack();
+        _attackCtrl.enabled = false;
+        GameManager.Instance.IsEnd = true;
     }
 }
