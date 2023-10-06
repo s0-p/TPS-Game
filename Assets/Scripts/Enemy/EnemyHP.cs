@@ -46,8 +46,6 @@ public class EnemyHP : MonoBehaviour
         _isDamaged = true;
         _curHP = _curHP - damage <= 0 ? 0 : _curHP - damage;
 
-        Debug.Log(_curHP);
-
         if (_curHP <= 0f)
             OnDead();
 
