@@ -8,15 +8,18 @@ public class PlayerMove : MonoBehaviour
     float _moveSpeed = 5f;
     [Header("회전 속도"), SerializeField]
     float _rotSpeed = 10f;
+    //----------------------------------------
     [Header("이동 컨트롤러"), SerializeField]
     InputCtrlBase _inputCtrl;
     Transform _characterTrsf;
-
+    //-----------------------------------------------------------------
     void Awake()
     {
         _characterTrsf = GetComponentInChildren<Transform>();
     }
-    void Update()
+    void Update() { Move(); }
+    //-----------------------------------------------------------------
+    void Move()
     {
         if (_inputCtrl == null) return;
 
