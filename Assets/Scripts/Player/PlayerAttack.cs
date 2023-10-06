@@ -2,6 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum WEAPON
+{
+    ROTATED_WEAPON,
+    MAX
+}
 public class PlayerAttack : MonoBehaviour
 {
     [Header("일반 공격 쿨타임"), SerializeField]
@@ -15,7 +20,16 @@ public class PlayerAttack : MonoBehaviour
     //----------------------------------------
     GameObject _target;
     Vector3 _dirToTarget;
+    //----------------------------------------
+    List<GameObject> _weapons;
+    public List<GameObject> Weapons => _weapons;
     //-----------------------------------------------------------------
+    void Awake()
+    {
+        _weapons = new List<GameObject>();
+        for (int i = 0; i < (int)WEAPON.MAX; i++)
+            _weapons.Add(transform.GetChild(0).GetChild(i).gameObject);
+    }
     void Update()
     {
         _curTime += Time.deltaTime;

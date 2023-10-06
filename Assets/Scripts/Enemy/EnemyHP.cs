@@ -29,7 +29,7 @@ public class EnemyHP : MonoBehaviour
     }
     void Update()
     {
-        if (_isDamaged)
+        if (_isDamaged && !_isDead)
         {
             _meshRenderer.material.color
                 = Color.Lerp(Color.white, Color.red, 0.5f);
