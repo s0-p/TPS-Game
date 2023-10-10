@@ -9,65 +9,58 @@ public class EnemyHP : MonoBehaviour
     float _curHP;
     public float CurHP => _curHP;
     //----------------------------------------
-    MeshRenderer _meshRenderer;
+    public bool IsDead { get; private set; }
+    //----------------------------------------
+    //MeshRenderer _meshRenderer;
     [Header("피격 유지 시간"), SerializeField]
     float _hittedTime = 1f;
     //----------------------------------------
     EnemyMove _moveCtrl;
     EnemyAttack _attackCtrl;
-    //----------------------------------------
-    bool _isDamaged;
-    bool _isDead;
-    public bool IsDead => _isDead;
+    EnemyAnim _animCtrl;
     //-----------------------------------------------------------------
     void Awake()
     {
         _curHP = _initHP;
-        _meshRenderer = GetComponentInChildren<MeshRenderer>();
+        IsDead = false;
+        //_meshRenderer = GetComponentInChildren<MeshRenderer>();
         _moveCtrl = GetComponent<EnemyMove>();
         _attackCtrl = GetComponent<EnemyAttack>();
-    }
-    void Update()
-    {
-        if (_isDamaged && !_isDead)
-        {
-            _meshRenderer.material.color
-                = Color.Lerp(Color.white, Color.red, 0.5f);
-            StartCoroutine(Crt_ReleseHitState());
-        }
-        else
-        {
-            _meshRenderer.material.color = Color.white;
-        }
+        _animCtrl = GetComponent<EnemyAnim>();
     }
     //-----------------------------------------------------------------
-    public void TakeDamage(float damage, float knockPow)
+    public void TakeDamage(float damage, float knockPow = 0)
     {
-        _isDamaged = true;
         _curHP = _curHP - damage <= 0 ? 0 : _curHP - damage;
 
         if (_curHP <= 0f)
             OnDead();
-
-        _moveCtrl.KnockBack(-transform.forward, knockPow);
+        else
+        {
+            _attackCtrl.enabled = false;
+            _animCtrl.Damaged();
+            _moveCtrl.KnockBack(-transform.forward, knockPow);
+            StartCoroutine(Crt_ReleseHitState());
+        }
     }
     //-----------------------------------------------------------------
     IEnumerator Crt_ReleseHitState()
     {
         yield return new WaitForSeconds(_hittedTime);
-        _isDamaged = false;
+        _attackCtrl.enabled = true;
     }
     void OnDead()
     {
-        _isDead = true;
-        GetComponentInChildren<CapsuleCollider>().isTrigger = true;
+        IsDead = true;
+        _animCtrl.Die();
+        _attackCtrl.enabled = false;
+        GetComponentInChildren<BoxCollider>().isTrigger = true;
         StartSinking();
     }
     void StartSinking()
     {
-        _moveCtrl.StartSink();
-        _attackCtrl.enabled = false;
-        Destroy(gameObject, 2f);
+        _moveCtrl.Invoke("StartSink", 1f);
+        Destroy(gameObject, 3f);
     }
 
 }

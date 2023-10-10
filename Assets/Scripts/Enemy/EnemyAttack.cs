@@ -9,17 +9,25 @@ public class EnemyAttack : MonoBehaviour
     float _coolTime = 1f;
     float _coolTimer = 0f;
     //----------------------------------------
+    EnemyAnim _animCtrl;
+    //----------------------------------------
     bool _isPlayerInRange = false;
     //----------------------------------------
     PlayerHP _playerHP;
     //-----------------------------------------------------------------
-    void Awake() { _coolTimer = 0f; _isPlayerInRange = false; }
+    void Awake() 
+    { 
+        _coolTimer = _coolTime;
+        _animCtrl = GetComponent<EnemyAnim>();
+        _isPlayerInRange = false;
+    }
     void Update()
     {
         _coolTimer += Time.deltaTime;
         if (_isPlayerInRange && _coolTimer >= _coolTime)
         {
             _coolTimer = 0f;
+            _animCtrl.Attack();
             _playerHP.TakeDamage(_power);
         }
     }
@@ -32,5 +40,4 @@ public class EnemyAttack : MonoBehaviour
         }
     }
     void OnTriggerExit(Collider other) { _isPlayerInRange = false; _playerHP = null; }
-
 }

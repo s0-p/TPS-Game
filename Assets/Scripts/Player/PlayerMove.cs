@@ -10,6 +10,8 @@ public class PlayerMove : MonoBehaviour
     float _upSpeed = 1f;
     public float UpSpeed { get { return _upSpeed; } set { _upSpeed = value; } }
     //----------------------------------------
+    PlayerAnim _animCtrl;
+    //----------------------------------------
     [Header("이동 컨트롤러"), SerializeField]
     InputCtrlBase _inputCtrl;
     Transform _characterTrsf;
@@ -17,6 +19,7 @@ public class PlayerMove : MonoBehaviour
     void Awake()
     {
         _upSpeed = 1f;
+        _animCtrl = GetComponent<PlayerAnim>();
         _characterTrsf = GetComponentInChildren<Transform>();
     }
     void Update() { Move(); }
@@ -29,10 +32,15 @@ public class PlayerMove : MonoBehaviour
 
         if (moveDir != Vector3.zero)
         {
+            _animCtrl.Run(true);
             _characterTrsf.SetPositionAndRotation(
                     _characterTrsf.position + Time.deltaTime * _moveSpeed * _upSpeed * moveDir,
                     Quaternion.Lerp(_characterTrsf.rotation, Quaternion.LookRotation(moveDir), Time.deltaTime * _rotSpeed * _upSpeed)
                 );
+        }
+        else
+        {
+            _animCtrl.Run(false);
         }
     }
 }

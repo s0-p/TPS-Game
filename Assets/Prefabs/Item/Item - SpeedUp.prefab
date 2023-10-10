@@ -45,7 +45,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dbaf5534034c04347bb98541d5e8ac27, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _upValue: 3
+  _upValue: 2
   _duration: 3
 --- !u!54 &6622511544588990168
 Rigidbody:

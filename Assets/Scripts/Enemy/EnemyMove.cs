@@ -12,6 +12,8 @@ public class EnemyMove : MonoBehaviour
     NavMeshAgent _navMash;
     Rigidbody _rigidbody;
     //----------------------------------------
+    EnemyAnim _animCtrl;
+    //----------------------------------------
     Transform _targetTrsf;
     //-----------------------------------------------------------------
     void Awake()
@@ -19,12 +21,23 @@ public class EnemyMove : MonoBehaviour
         _isSinking = false;
         _navMash = GetComponent<NavMeshAgent>();
         _rigidbody = GetComponent<Rigidbody>();
+        _animCtrl = GetComponent<EnemyAnim>();
         _targetTrsf = GameObject.FindGameObjectWithTag("Player").transform;
     }
     void Update()
     {
         if (_navMash.enabled)
-            _navMash.SetDestination(_targetTrsf.position);
+        {
+            float sqrDist = (_targetTrsf.position - transform.position).sqrMagnitude;
+            if (sqrDist <= _navMash.stoppingDistance * _navMash.stoppingDistance)
+                _animCtrl.Run(false);
+            else
+            {
+                _navMash.SetDestination(_targetTrsf.position);
+                _animCtrl.Run(true);
+            }
+        }
+
         if (_isSinking)
             transform.Translate(Time.deltaTime * _sinkSpeed * Vector3.down);
     }
